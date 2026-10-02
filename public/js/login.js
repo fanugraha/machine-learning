@@ -1,44 +1,44 @@
 const form = document.getElementById('login-form');
-const errorBox = document.getElementById('form-error');
-const passwordInput = document.getElementById('password');
-const toggleBtn = document.getElementById('toggle-password');
+const message = document.getElementById('form-message');
+const submitBtn = document.getElementById('submit-btn');
 const googleBtn = document.getElementById('google-login');
 
-function showError(message) {
-  errorBox.textContent = message;
-  errorBox.classList.remove('hidden');
-}
-
-toggleBtn.addEventListener('click', () => {
-  const show = passwordInput.type === 'password';
-  passwordInput.type = show ? 'text' : 'password';
-  toggleBtn.textContent = show ? 'Sembunyi' : 'Lihat';
-  toggleBtn.setAttribute('aria-label', show ? 'Sembunyikan password' : 'Tampilkan password');
-});
-
-form.addEventListener('submit', (e) => {
+form.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const { username, password } = Object.fromEntries(new FormData(form));
+  const { email, password } = Object.fromEntries(new FormData(form));
 
-  if (!username.trim() || !password) {
-    showError('Username dan password wajib diisi.');
+  if (!email.trim() || !password) {
+    ui.show(message, 'error', 'Email dan password wajib diisi.');
     return;
   }
-  errorBox.classList.add('hidden');
-  // TODO: login username/password (Supabase Auth memakai email + password)
+
+  ui.hide(message);
+  ui.setLoading(submitBtn, true, 'Memproses...');
+
+  const { error } = await window.supabaseClient.auth.signInWithPassword({
+    email: email.trim(),
+    password,
+  });
+
+  if (error) {
+    ui.show(message, 'error', ui.friendlyError(error));
+    ui.setLoading(submitBtn, false);
+    return;
+  }
+  window.location.replace('dashboard.html');
 });
 
 googleBtn.addEventListener('click', async () => {
-  errorBox.classList.add('hidden');
+  ui.hide(message);
   googleBtn.disabled = true;
 
   const { error } = await window.supabaseClient.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: new URL('dashboard.html', window.location.href).href },
+    options: { redirectTo: ui.redirectUrl('dashboard.html') },
   });
 
   if (error) {
-    showError(error.message);
+    ui.show(message, 'error', ui.friendlyError(error));
     googleBtn.disabled = false;
   }
 });
