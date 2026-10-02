@@ -58,3 +58,32 @@ form.addEventListener('submit', async (e) => {
   );
   ui.setLoading(submitBtn, false);
 });
+
+// Indikator kekuatan password.
+const passwordInput = document.getElementById('password');
+const bars = document.querySelectorAll('#strength span');
+const strengthText = document.getElementById('strength-text');
+const levels = [
+  { text: '', color: 'bg-gray-200' },
+  { text: 'Lemah', color: 'bg-red-500' },
+  { text: 'Cukup', color: 'bg-orange-400' },
+  { text: 'Baik', color: 'bg-yellow-400' },
+  { text: 'Kuat', color: 'bg-green-500' },
+];
+const colors = levels.map((l) => l.color).concat('bg-gray-200');
+
+passwordInput.addEventListener('input', () => {
+  const v = passwordInput.value;
+  let score = 0;
+  if (v.length >= 8) score++;
+  if (/[a-z]/.test(v) && /[A-Z]/.test(v)) score++;
+  if (/\d/.test(v)) score++;
+  if (/[^A-Za-z0-9]/.test(v) || v.length >= 12) score++;
+  if (v) score = Math.max(score, 1);
+
+  bars.forEach((bar, i) => {
+    bar.classList.remove(...new Set(colors));
+    bar.classList.add(i < score ? levels[score].color : 'bg-gray-200');
+  });
+  strengthText.textContent = levels[score].text;
+});

@@ -3,7 +3,7 @@ window.ui = {
   show(el, type, message) {
     el.textContent = message;
     el.className =
-      'rounded-lg px-3 py-2 text-sm ' +
+      'rounded-xl px-4 py-3 text-sm ' +
       (type === 'error' ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-700');
   },
 
@@ -14,13 +14,17 @@ window.ui = {
 
   setLoading(btn, loading, loadingText) {
     if (loading) {
-      btn.dataset.label = btn.textContent;
-      btn.textContent = loadingText || 'Memproses...';
-    } else if (btn.dataset.label) {
-      btn.textContent = btn.dataset.label;
+      btn.dataset.html = btn.innerHTML;
+      btn.innerHTML =
+        '<svg class="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+        '<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"/>' +
+        '<path d="M4 12a8 8 0 018-8" stroke="currentColor" stroke-width="4" stroke-linecap="round" class="opacity-90"/>' +
+        '</svg><span>' + (loadingText || 'Memproses...') + '</span>';
+    } else if (btn.dataset.html) {
+      btn.innerHTML = btn.dataset.html;
     }
     btn.disabled = loading;
-    btn.classList.toggle('opacity-60', loading);
+    btn.classList.toggle('opacity-70', loading);
     btn.classList.toggle('cursor-not-allowed', loading);
   },
 
