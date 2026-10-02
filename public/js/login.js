@@ -34,7 +34,7 @@ googleBtn.addEventListener('click', async () => {
 
   const { error } = await window.supabaseClient.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: `${window.location.origin}/dashboard.html` },
+    options: { redirectTo: new URL('dashboard.html', window.location.href).href },
   });
 
   if (error) {
