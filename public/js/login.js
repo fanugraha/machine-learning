@@ -4,6 +4,11 @@ const passwordInput = document.getElementById('password');
 const toggleBtn = document.getElementById('toggle-password');
 const googleBtn = document.getElementById('google-login');
 
+function showError(message) {
+  errorBox.textContent = message;
+  errorBox.classList.remove('hidden');
+}
+
 toggleBtn.addEventListener('click', () => {
   const show = passwordInput.type === 'password';
   passwordInput.type = show ? 'text' : 'password';
@@ -16,16 +21,29 @@ form.addEventListener('submit', (e) => {
   const { username, password } = Object.fromEntries(new FormData(form));
 
   if (!username.trim() || !password) {
-    errorBox.textContent = 'Username dan password wajib diisi.';
-    errorBox.classList.remove('hidden');
+    showError('Username dan password wajib diisi.');
     return;
   }
   errorBox.classList.add('hidden');
-  // TODO: hubungkan ke API autentikasi
-  console.log({ username });
+  // TODO: login username/password (Supabase Auth memakai email + password)
 });
 
-googleBtn.addEventListener('click', () => {
-  // TODO: hubungkan ke Google OAuth
-  console.log('login with google');
+googleBtn.addEventListener('click', async () => {
+  errorBox.classList.add('hidden');
+  googleBtn.disabled = true;
+
+  const { error } = await window.supabaseClient.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: `${window.location.origin}/dashboard.html` },
+  });
+
+  if (error) {
+    showError(error.message);
+    googleBtn.disabled = false;
+  }
+});
+
+// Kalau sudah login, langsung ke dashboard.
+window.supabaseClient.auth.getSession().then(({ data }) => {
+  if (data.session) window.location.replace('dashboard.html');
 });
