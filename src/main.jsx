@@ -1,0 +1,12 @@
+// Harus paling awal: simpan hash URL sebelum Supabase membersihkannya.
+import './lib/initial-url.js';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './App.jsx';
+import './styles/main.css';
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+);

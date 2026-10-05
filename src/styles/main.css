@@ -1,0 +1,144 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans text-ink-primary antialiased;
+  }
+  a:where(:not(.btn)) {
+    @apply font-semibold text-brand-700 hover:text-brand-600 hover:underline;
+  }
+}
+
+@layer components {
+  /* Logo */
+  .logo-mark {
+    @apply flex shrink-0 items-center justify-center rounded-lg text-white;
+    background: linear-gradient(135deg, #20aeb8, #91c964);
+  }
+
+  /* Tombol */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/30 disabled:cursor-not-allowed;
+  }
+  .btn-lg {
+    @apply h-11 px-5 text-[15px];
+  }
+  .btn-md {
+    @apply h-9 px-3 text-sm;
+  }
+  .btn-primary {
+    @apply bg-brand-600 text-white hover:bg-brand-700 disabled:bg-line-primary disabled:text-ink-tertiary;
+  }
+  .btn-secondary {
+    @apply border border-line-secondary bg-white text-ink-primary hover:bg-surface-secondary disabled:text-ink-tertiary disabled:hover:bg-white;
+  }
+  .btn-ghost {
+    @apply text-ink-secondary hover:bg-surface-secondary hover:text-ink-primary;
+  }
+
+  /* Field */
+  .field-label {
+    @apply mb-1.5 block text-sm font-medium text-ink-primary;
+  }
+  .field-input {
+    @apply flex h-11 items-center gap-2 rounded-lg border border-line-secondary bg-white px-3 transition focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/15;
+  }
+  .field-input input {
+    @apply h-full w-full min-w-0 flex-1 bg-transparent text-[15px] text-ink-primary placeholder-ink-tertiary/70 focus:outline-none disabled:cursor-not-allowed;
+  }
+  .field-input:has(input:disabled) {
+    @apply bg-surface-secondary text-ink-tertiary;
+  }
+  .field-input.is-error {
+    @apply border-red-500 focus-within:border-red-500 focus-within:ring-red-500/15;
+  }
+  .field-trailing {
+    @apply flex shrink-0 items-center text-ink-tertiary;
+  }
+  .field-unit {
+    @apply shrink-0 text-sm text-ink-tertiary;
+  }
+  .field-hint {
+    @apply mt-1.5 text-xs text-ink-tertiary;
+  }
+
+  /* Checkbox */
+  .checkbox {
+    @apply flex cursor-pointer items-start gap-2;
+  }
+  .checkbox input {
+    @apply mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded border-line-secondary accent-brand-600;
+  }
+
+  /* Radio kartu */
+  .radio-card {
+    @apply flex h-11 cursor-pointer items-center gap-2 rounded-lg border border-line-secondary px-3 text-sm font-medium transition has-[:checked]:border-brand-500 has-[:checked]:bg-brand-50;
+  }
+  .radio-card input {
+    @apply h-4 w-4 accent-brand-600;
+  }
+
+  /* Chip tujuan */
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-line-secondary bg-white px-4 py-2 text-sm font-medium text-ink-primary transition hover:border-brand-500;
+  }
+  .chip[aria-pressed='true'] {
+    @apply border-brand-500 bg-brand-50 text-brand-700;
+  }
+
+  /* Banner */
+  .banner {
+    @apply flex gap-3 rounded-lg border px-4 py-3 text-sm;
+  }
+  .banner-error {
+    @apply border-red-200 bg-red-50 text-red-800;
+  }
+  .banner-warning {
+    @apply border-amber-200 bg-amber-50 text-amber-900;
+  }
+  .banner-success {
+    @apply border-green-200 bg-green-50 text-green-800;
+  }
+  .banner-title {
+    @apply font-semibold;
+  }
+
+  /* Stepper */
+  .step {
+    @apply flex flex-col items-center gap-1.5 text-xs font-medium text-ink-tertiary;
+  }
+  .step-circle {
+    @apply flex h-7 w-7 items-center justify-center rounded-full border-2 border-line-secondary bg-white text-xs font-semibold;
+  }
+  .step[data-state='active'] {
+    @apply text-ink-primary;
+  }
+  .step[data-state='active'] .step-circle {
+    @apply border-brand-600 text-brand-700;
+  }
+  .step[data-state='complete'] .step-circle {
+    @apply border-brand-600 bg-brand-600 text-white;
+  }
+
+  /* Bubble chat contoh */
+  .bubble {
+    @apply max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-5;
+  }
+  .bubble-user {
+    @apply self-end rounded-br-md bg-brand-600 text-white;
+  }
+  .bubble-edith {
+    @apply self-start rounded-bl-md bg-surface-secondary text-ink-primary;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

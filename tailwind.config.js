@@ -1,31 +1,59 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: ['./public/**/*.html', './public/**/*.js'],
+export default {
+  content: ['./index.html', './src/**/*.{js,jsx}'],
+  // Kelas yang dibentuk dinamis di <Banner> ('banner-' + type) dan <Button> ('btn-' + variant/size).
+  safelist: [
+    'banner-error',
+    'banner-warning',
+    'banner-success',
+    'btn-primary',
+    'btn-secondary',
+    'btn-ghost',
+    'btn-lg',
+    'btn-md',
+  ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+      },
+      colors: {
+        // Warna brand EDITH (teal → hijau dari logo).
+        brand: {
+          50: '#EBF8F9',
+          100: '#CFEFF1',
+          200: '#A3E0E4',
+          500: '#20AEB8',
+          600: '#118690',
+          700: '#0D6E76',
+          lime: '#91C964',
+        },
+        ink: {
+          primary: '#101828',
+          secondary: '#475467',
+          tertiary: '#667085',
+        },
+        line: {
+          primary: '#E4E7EC',
+          secondary: '#D0D5DD',
+        },
+        surface: {
+          secondary: '#F5F7F9',
+        },
+      },
       keyframes: {
-        gradient: {
-          '0%, 100%': { backgroundPosition: '0% 50%' },
-          '50%': { backgroundPosition: '100% 50%' },
-        },
-        float: {
-          '0%, 100%': { transform: 'translateY(0) scale(1)' },
-          '50%': { transform: 'translateY(-24px) scale(1.05)' },
-        },
         fadeUp: {
-          '0%': { opacity: '0', transform: 'translateY(16px)' },
+          '0%': { opacity: '0', transform: 'translateY(12px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
-        nodePulse: {
-          '0%, 100%': { opacity: '0.35' },
-          '50%': { opacity: '1' },
+        sheetUp: {
+          '0%': { transform: 'translateY(100%)' },
+          '100%': { transform: 'translateY(0)' },
         },
       },
       animation: {
-        gradient: 'gradient 14s ease infinite',
-        float: 'float 9s ease-in-out infinite',
-        'fade-up': 'fadeUp 0.6s ease-out both',
-        'node-pulse': 'nodePulse 3s ease-in-out infinite',
+        'fade-up': 'fadeUp 0.4s ease-out both',
+        'sheet-up': 'sheetUp 0.25s ease-out both',
       },
     },
   },
