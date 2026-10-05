@@ -11,7 +11,7 @@ describe('validateProfile', () => {
     expect(r.underage).toBe(false);
     expect(r.profile).toEqual({
       nickname: 'Rina',
-      dob: '1994-03-14',
+      birth_date: '1994-03-14',
       gender: 'female',
       height_cm: 158,
       weight_kg: 54.5,

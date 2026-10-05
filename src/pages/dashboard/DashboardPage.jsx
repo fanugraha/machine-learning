@@ -32,13 +32,15 @@ const COURSES = [
 ];
 
 function Dashboard() {
-  const user = useStepGuard(PATHS.dashboard);
+  const session = useStepGuard(PATHS.dashboard);
   const signOut = useSignOut();
-  if (!user) return null;
+  if (!session) return null;
+
+  const { user, profile } = session;
 
   const meta = user.user_metadata || {};
-  const name = meta.full_name || meta.name || user.email;
-  const nickname = meta.edith_profile?.nickname || name.split(' ')[0];
+  const name = profile.full_name || meta.full_name || meta.name || user.email;
+  const nickname = profile.nickname || name.split(' ')[0];
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-800">

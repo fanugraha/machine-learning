@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { CheckCheck } from 'lucide-react';
-import { supabase } from '../../lib/supabase.js';
 import { friendlyError } from '../../lib/auth-errors.js';
 import { nextPath, STORAGE_KEYS } from '../../lib/flow.js';
+import { updateMyProfile } from '../../lib/profile-api.js';
 import { isoToDob } from '../../utils/date.js';
 import { PATHS } from '../../routes/paths.js';
 import { useSignOut, useStepGuard } from '../../hooks/useAuthFlow.js';
@@ -28,33 +28,38 @@ const readDraft = (key) => {
   }
 };
 
-// Nilai awal: profil yang sudah tersimpan di Supabase, lalu ditimpa draft lokal bila ada.
-function initialState(user) {
+// Nilai awal: profil yang sudah tersimpan di database, lalu ditimpa draft lokal bila ada.
+function initialState(user, profile) {
   const meta = user.user_metadata || {};
-  const firstName = (meta.full_name || meta.name || '').trim().split(/\s+/)[0];
-  const saved = meta.edith_profile;
+  const firstName = (profile?.full_name || meta.full_name || meta.name || '').trim().split(/\s+/)[0];
+  const profileDone = !!profile?.birth_date;
   const draft = readDraft(STORAGE_KEYS.onboardingDraft(user.id));
 
   let form = { ...EMPTY_PROFILE, nickname: firstName };
-  if (saved) {
+  if (profileDone) {
     form = {
-      nickname: saved.nickname,
-      dob: isoToDob(saved.dob),
-      gender: saved.gender,
-      height: String(saved.height_cm),
-      weight: String(saved.weight_kg),
+      nickname: profile.nickname || '',
+      dob: isoToDob(profile.birth_date),
+      gender: profile.gender || '',
+      height: String(profile.height_cm ?? ''),
+      weight: String(profile.weight_kg ?? ''),
     };
   }
   if (draft?.profile) form = { ...form, ...draft.profile };
 
-  return { firstName, form, goals: draft?.goals || [], view: saved ? 'goals' : 'profile' };
+  return {
+    firstName,
+    form,
+    goals: draft?.goals || profile?.goals || [],
+    view: profileDone ? 'goals' : 'profile',
+  };
 }
 
-function OnboardingFlow({ user }) {
+function OnboardingFlow({ user, profile }) {
   const navigate = useNavigate();
   const signOut = useSignOut();
   const draftKey = STORAGE_KEYS.onboardingDraft(user.id);
-  const [initial] = useState(() => initialState(user));
+  const [initial] = useState(() => initialState(user, profile));
 
   const [view, setView] = useState(initial.view); // profile | goals | waitlist
   const [form, setForm] = useState(initial.form);
@@ -88,14 +93,22 @@ function OnboardingFlow({ user }) {
     if (result.underage) {
       // Hapus semua data yang sempat diisi, lalu tawarkan daftar tunggu.
       localStorage.removeItem(draftKey);
-      await supabase.auth.updateUser({ data: { edith_profile: null, edith_goals: null } });
+      const { error } = await updateMyProfile(user.id, {
+        nickname: null,
+        birth_date: null,
+        gender: null,
+        height_cm: null,
+        weight_kg: null,
+        goals: [],
+      });
+      if (error) console.error('Gagal menghapus data profil:', error);
       setSaving(false);
       setForm(EMPTY_PROFILE);
       setGoals([]);
       return goTo('waitlist');
     }
 
-    const { error } = await supabase.auth.updateUser({ data: { edith_profile: result.profile } });
+    const { error } = await updateMyProfile(user.id, result.profile);
     setSaving(false);
     if (error) return setMessage({ title: friendlyError(error) });
     goTo('goals');
@@ -107,15 +120,13 @@ function OnboardingFlow({ user }) {
   const finish = async () => {
     setGoalsError(null);
     setSaving(true);
-    const { data, error } = await supabase.auth.updateUser({
-      data: { edith_goals: goals, edith_onboarded_at: new Date().toISOString() },
-    });
+    const { data, error } = await updateMyProfile(user.id, { goals, onboarded_at: new Date().toISOString() });
     if (error) {
       setSaving(false);
       return setGoalsError(friendlyError(error));
     }
     localStorage.removeItem(draftKey);
-    navigate(nextPath(data.user), { replace: true });
+    navigate(nextPath(user, data), { replace: true });
   };
 
   return (
@@ -147,7 +158,7 @@ function OnboardingFlow({ user }) {
 }
 
 export default function OnboardingPage() {
-  const user = useStepGuard(PATHS.onboarding);
-  if (!user) return <StepLayout title="Kenalan dulu" hidden />;
-  return <OnboardingFlow user={user} />;
+  const session = useStepGuard(PATHS.onboarding);
+  if (!session) return <StepLayout title="Kenalan dulu" hidden />;
+  return <OnboardingFlow user={session.user} profile={session.profile} />;
 }

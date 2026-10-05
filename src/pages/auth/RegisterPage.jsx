@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router';
 import { Lock, Trash2, UserCheck } from 'lucide-react';
 import { supabase } from '../../lib/supabase.js';
 import { friendlyError } from '../../lib/auth-errors.js';
-import { nextPath, STORAGE_KEYS } from '../../lib/flow.js';
+import { STORAGE_KEYS } from '../../lib/flow.js';
+import { POLICY_VERSION, resolveNextPath } from '../../lib/profile-api.js';
 import { isValidPassword } from '../../utils/password.js';
 import { AUTH_REDIRECTS, PATHS, absoluteUrl } from '../../routes/paths.js';
 import { useRedirectIfSignedIn } from '../../hooks/useAuthFlow.js';
@@ -74,7 +75,8 @@ export default function RegisterPage() {
       email,
       password: form.password,
       options: {
-        data: { full_name: fullName, edith_tos_at: new Date().toISOString() },
+        // Dibaca trigger database untuk membuat profil & mencatat persetujuan S&K.
+        data: { full_name: fullName, edith_tos_at: new Date().toISOString(), edith_policy_version: POLICY_VERSION },
         emailRedirectTo: absoluteUrl(AUTH_REDIRECTS.afterSignIn),
       },
     });
@@ -88,7 +90,7 @@ export default function RegisterPage() {
     }
 
     // Verifikasi email dimatikan di Supabase: langsung lanjut.
-    if (data.session) return navigate(nextPath(data.session.user), { replace: true });
+    if (data.session) return navigate(await resolveNextPath(data.session.user), { replace: true });
 
     sessionStorage.setItem(STORAGE_KEYS.pendingEmail, email);
     sessionStorage.removeItem(STORAGE_KEYS.verifySentAt);

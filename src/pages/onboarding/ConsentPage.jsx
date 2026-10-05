@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Lock, LogOut, Sparkles, Trash2, TriangleAlert } from 'lucide-react';
-import { supabase } from '../../lib/supabase.js';
 import { friendlyError } from '../../lib/auth-errors.js';
-import { nextPath } from '../../lib/flow.js';
+import { recordHealthConsent, resolveNextPath } from '../../lib/profile-api.js';
 import { PATHS } from '../../routes/paths.js';
 import { useSignOut, useStepGuard } from '../../hooks/useAuthFlow.js';
 import { StepLayout, StepCard } from '../../components/layout/StepLayout.jsx';
@@ -19,7 +18,7 @@ const POINTS = [
 ];
 
 export default function ConsentPage() {
-  const user = useStepGuard(PATHS.consent);
+  const session = useStepGuard(PATHS.consent);
   const navigate = useNavigate();
   const signOut = useSignOut();
   const [agreed, setAgreed] = useState(false);
@@ -30,20 +29,18 @@ export default function ConsentPage() {
   const agree = async () => {
     setError(null);
     setSaving(true);
-    const { data, error: saveError } = await supabase.auth.updateUser({
-      data: { edith_consent_at: new Date().toISOString() },
-    });
+    const { error: saveError } = await recordHealthConsent();
     if (saveError) {
       setSaving(false);
       return setError(friendlyError(saveError));
     }
-    navigate(nextPath(data.user), { replace: true });
+    navigate(await resolveNextPath(session.user), { replace: true });
   };
 
   return (
     <StepLayout
       title="Persetujuan data"
-      hidden={!user}
+      hidden={!session}
       headerRight={
         <Button variant="ghost" size="md" onClick={signOut}>
           <LogOut className="hidden h-[18px] w-[18px] lg:block" />

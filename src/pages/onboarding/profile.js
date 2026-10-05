@@ -44,7 +44,7 @@ export function validateProfile(form, today = new Date()) {
     underage: ageFrom(dob, today) < MIN_AGE,
     profile: {
       nickname: form.nickname.trim(),
-      dob: toIsoDate(dob),
+      birth_date: toIsoDate(dob),
       gender: form.gender,
       height_cm: height,
       weight_kg: weight,

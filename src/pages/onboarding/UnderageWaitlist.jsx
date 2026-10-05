@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { User } from 'lucide-react';
-import { supabase } from '../../lib/supabase.js';
+import { joinWaitlist } from '../../lib/profile-api.js';
 import { friendlyError } from '../../lib/auth-errors.js';
 import { StepCard, StatusHeader } from '../../components/layout/StepLayout.jsx';
 import { Banner } from '../../components/ui/Banner.jsx';
@@ -19,9 +19,7 @@ export function UnderageWaitlist({ defaultEmail, onExit }) {
     const address = email.trim();
     if (!address) return setMessage({ type: 'error', title: 'Email wajib diisi' });
     setSaving(true);
-    const { error } = await supabase.auth.updateUser({
-      data: { edith_waitlist_email: address, edith_waitlist_at: new Date().toISOString() },
-    });
+    const { error } = await joinWaitlist(address);
     setSaving(false);
     if (error) return setMessage({ type: 'error', title: friendlyError(error) });
     setMessage({

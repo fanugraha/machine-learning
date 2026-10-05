@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router';
 import { Clock, KeyRound } from 'lucide-react';
 import { supabase, setRememberMe } from '../../lib/supabase.js';
 import { friendlyError, isEmailNotConfirmed, isInvalidCredentials } from '../../lib/auth-errors.js';
-import { nextPath, STORAGE_KEYS } from '../../lib/flow.js';
+import { STORAGE_KEYS } from '../../lib/flow.js';
+import { resolveNextPath } from '../../lib/profile-api.js';
 import { formatTimer } from '../../utils/date.js';
 import { PATHS } from '../../routes/paths.js';
 import { useRedirectIfSignedIn } from '../../hooks/useAuthFlow.js';
@@ -120,7 +121,7 @@ export default function LoginPage() {
     }
 
     saveAttempts({ count: 0, lockedUntil: 0 });
-    navigate(nextPath(data.user), { replace: true });
+    navigate(await resolveNextPath(data.user), { replace: true });
   };
 
   return (

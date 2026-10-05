@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router';
 import { Clock } from 'lucide-react';
 import { supabase } from '../../lib/supabase.js';
 import { friendlyError } from '../../lib/auth-errors.js';
-import { nextPath } from '../../lib/flow.js';
+import { resolveNextPath } from '../../lib/profile-api.js';
 import { initialHashError } from '../../lib/initial-url.js';
 import { isValidPassword } from '../../utils/password.js';
 import { AUTH_REDIRECTS, PATHS } from '../../routes/paths.js';
@@ -62,7 +62,8 @@ export default function ResetPasswordPage() {
       title: 'Password berhasil diubah',
       description: 'Sebentar, kami arahkan kamu ke EDITH...',
     });
-    setTimeout(() => navigate(nextPath(data.user), { replace: true }), 1500);
+    const next = await resolveNextPath(data.user);
+    setTimeout(() => navigate(next, { replace: true }), 1500);
   };
 
   return (
