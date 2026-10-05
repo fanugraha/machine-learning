@@ -1,8 +1,7 @@
-import { Calendar } from 'lucide-react';
-import { maskDob } from '../../utils/date.js';
 import { StepCard } from '../../components/layout/StepLayout.jsx';
 import { Banner } from '../../components/ui/Banner.jsx';
 import { Button } from '../../components/ui/Button.jsx';
+import { DateField } from '../../components/ui/DateField.jsx';
 import { Field } from '../../components/ui/Field.jsx';
 import { Stepper } from '../../components/ui/Stepper.jsx';
 import { cx } from '../../utils/cx.js';
@@ -55,17 +54,13 @@ export function ProfileStep({ firstName, form, onChange, invalid, message, savin
           onChange={set('nickname')}
           invalid={invalid.nickname}
         />
-        <Field
+        <DateField
           id="dob"
           label="Tanggal lahir"
-          inputMode="numeric"
           autoComplete="bday"
-          placeholder="DD / MM / YYYY"
-          maxLength={14}
           value={form.dob}
-          onChange={set('dob', maskDob)}
+          onChange={(dob) => onChange({ ...form, dob })}
           invalid={invalid.dob}
-          trailing={<Calendar className="h-5 w-5" />}
           hint="Minimal 18 tahun, ya."
         />
         <fieldset>
