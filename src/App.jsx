@@ -13,6 +13,11 @@ const OnboardingPage = lazy(() => import('./pages/onboarding/OnboardingPage.jsx'
 const AuthCallbackPage = lazy(() => import('./pages/auth/AuthCallbackPage.jsx'));
 const AccountLinkedPage = lazy(() => import('./pages/auth/AccountLinkedPage.jsx'));
 const HomePage = lazy(() => import('./pages/home/HomePage.jsx'));
+const NotesPage = lazy(() => import('./pages/notes/NotesPage.jsx'));
+const NoteDetailPage = lazy(() => import('./pages/notes/NoteDetailPage.jsx'));
+const ProfilePage = lazy(() => import('./pages/profile/ProfilePage.jsx'));
+const SummariesPage = lazy(() => import('./pages/summaries/SummariesPage.jsx'));
+const SummaryDetailPage = lazy(() => import('./pages/summaries/SummaryDetailPage.jsx'));
 
 // URL lama (*.html) dialihkan ke route baru dengan query yang sama.
 function LegacyRedirect({ to }) {
@@ -34,6 +39,11 @@ export default function App() {
           <Route path={PATHS.onboarding} element={<OnboardingPage />} />
           <Route path={PATHS.accountLinked} element={<AccountLinkedPage />} />
           <Route path={PATHS.home} element={<HomePage />} />
+          <Route path={PATHS.notes} element={<NotesPage />} />
+          <Route path={PATHS.note(':id')} element={<NoteDetailPage />} />
+          <Route path={PATHS.summaries} element={<SummariesPage />} />
+          <Route path={PATHS.summary(':id')} element={<SummaryDetailPage />} />
+          <Route path={PATHS.profile} element={<ProfilePage />} />
 
           {/* Redirect URL Supabase: dirender langsung (bukan dialihkan) supaya token di URL
               sempat diproses Supabase sebelum pindah halaman. */}

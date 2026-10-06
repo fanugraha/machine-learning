@@ -7,6 +7,11 @@ export const PATHS = {
   consent: '/consent',
   onboarding: '/onboarding',
   home: '/home',
+  notes: '/notes',
+  note: (id) => `/notes/${id}`,
+  summaries: '/summaries',
+  summary: (id) => `/summaries/${id}`,
+  profile: '/profile',
   accountLinked: '/account-linked',
 };
 
