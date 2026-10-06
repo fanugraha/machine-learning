@@ -147,7 +147,7 @@ export default function NoteDetailPage() {
               Ke dokter
             </Button>
             <Button className="flex-1" disabled title="Segera hadir">
-              Lanjutkan cerita
+              Kasih kabar terbaru
             </Button>
           </div>
         )
@@ -171,8 +171,7 @@ export default function NoteDetailPage() {
             <div className="flex flex-col gap-2 px-1 lg:px-0">
               <h1 className="text-xl font-bold tracking-tight lg:text-2xl">{note.title}</h1>
               <div className="flex flex-wrap items-center gap-1.5 lg:gap-2">
-                {note.level && <Chip tone={levelTone(note.level)}>{note.level}</Chip>}
-                {note.done && <Chip>Selesai</Chip>}
+                {note.done ? <Chip tone="success">Sudah sembuh</Chip> : note.level && <Chip tone={levelTone(note.level)}>{note.level}</Chip>}
                 <span className="text-xs text-ink-tertiary">
                   <span className="hidden lg:inline">{note.type} · </span>
                   {note.span}
@@ -193,7 +192,7 @@ export default function NoteDetailPage() {
                 Siapkan ke dokter
               </Button>
               <Button size="md" disabled title="Segera hadir">
-                Lanjutkan cerita
+                Kasih kabar terbaru
               </Button>
             </div>
           </div>
@@ -201,7 +200,7 @@ export default function NoteDetailPage() {
           <div className="flex flex-col gap-3 lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start lg:gap-x-6 lg:gap-y-4">
             {note.advice && (
               <Card title="Saran EDITH" className="lg:col-start-1 lg:row-start-1">
-                <Banner type={levelTone(note.level)} title={note.advice.title}>
+                <Banner type={note.done ? 'success' : levelTone(note.level)} title={note.advice.title}>
                   {note.advice.text}
                 </Banner>
                 {note.redFlags.length > 0 && (
