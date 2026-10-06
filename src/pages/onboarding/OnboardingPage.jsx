@@ -10,7 +10,6 @@ import { useSignOut, useStepGuard } from '../../hooks/useAuthFlow.js';
 import { StepLayout } from '../../components/layout/StepLayout.jsx';
 import { EMPTY_PROFILE, validateProfile } from './profile.js';
 import { ProfileStep } from './ProfileStep.jsx';
-import { GoalsStep } from './GoalsStep.jsx';
 import { UnderageWaitlist } from './UnderageWaitlist.jsx';
 
 const AutosaveNote = () => (
@@ -32,27 +31,15 @@ const readDraft = (key) => {
 function initialState(user, profile) {
   const meta = user.user_metadata || {};
   const firstName = (profile?.full_name || meta.full_name || meta.name || '').trim().split(/\s+/)[0];
-  const profileDone = !!profile?.birth_date;
   const draft = readDraft(STORAGE_KEYS.onboardingDraft(user.id));
 
-  let form = { ...EMPTY_PROFILE, nickname: firstName };
-  if (profileDone) {
-    form = {
-      nickname: profile.nickname || '',
-      dob: isoToDob(profile.birth_date),
-      gender: profile.gender || '',
-      height: String(profile.height_cm ?? ''),
-      weight: String(profile.weight_kg ?? ''),
-    };
-  }
-  if (draft?.profile) form = { ...form, ...draft.profile };
-
-  return {
-    firstName,
-    form,
-    goals: draft?.goals || profile?.goals || [],
-    view: profileDone ? 'goals' : 'profile',
+  let form = {
+    nickname: profile?.nickname || firstName,
+    dob: profile?.birth_date ? isoToDob(profile.birth_date) : '',
+    gender: profile?.gender || '',
   };
+  if (draft?.profile) form = { ...form, ...draft.profile };
+  return { firstName, form };
 }
 
 function OnboardingFlow({ user, profile }) {
@@ -61,26 +48,20 @@ function OnboardingFlow({ user, profile }) {
   const draftKey = STORAGE_KEYS.onboardingDraft(user.id);
   const [initial] = useState(() => initialState(user, profile));
 
-  const [view, setView] = useState(initial.view); // profile | goals | waitlist
+  const [view, setView] = useState('profile'); // profile | waitlist
   const [form, setForm] = useState(initial.form);
-  const [goals, setGoals] = useState(initial.goals);
   const [invalid, setInvalid] = useState({});
   const [message, setMessage] = useState(null);
   const [saving, setSaving] = useState(false);
-  const [goalsError, setGoalsError] = useState(null);
 
-  // "Progresmu tersimpan otomatis": simpan draft di browser setiap ada perubahan.
+  // "Progresmu tersimpan otomatis": simpan draft di browser setiap ada perubahan,
+  // supaya bisa dilanjutkan bila onboarding ditutup di tengah jalan.
   useEffect(() => {
     if (view === 'waitlist') return;
-    localStorage.setItem(draftKey, JSON.stringify({ profile: form, goals }));
-  }, [draftKey, form, goals, view]);
+    localStorage.setItem(draftKey, JSON.stringify({ profile: form }));
+  }, [draftKey, form, view]);
 
-  const goTo = (next) => {
-    setView(next);
-    window.scrollTo(0, 0);
-  };
-
-  const submitProfile = async (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     const result = validateProfile(form);
     setInvalid(result.invalid);
@@ -93,37 +74,21 @@ function OnboardingFlow({ user, profile }) {
     if (result.underage) {
       // Hapus semua data yang sempat diisi, lalu tawarkan daftar tunggu.
       localStorage.removeItem(draftKey);
-      const { error } = await updateMyProfile(user.id, {
-        nickname: null,
-        birth_date: null,
-        gender: null,
-        height_cm: null,
-        weight_kg: null,
-        goals: [],
-      });
+      const { error } = await updateMyProfile(user.id, { nickname: null, birth_date: null, gender: null });
       if (error) console.error('Gagal menghapus data profil:', error);
       setSaving(false);
       setForm(EMPTY_PROFILE);
-      setGoals([]);
-      return goTo('waitlist');
+      setView('waitlist');
+      return window.scrollTo(0, 0);
     }
 
-    const { error } = await updateMyProfile(user.id, result.profile);
-    setSaving(false);
-    if (error) return setMessage({ title: friendlyError(error) });
-    goTo('goals');
-  };
-
-  const toggleGoal = (goal) =>
-    setGoals((current) => (current.includes(goal) ? current.filter((g) => g !== goal) : [...current, goal]));
-
-  const finish = async () => {
-    setGoalsError(null);
-    setSaving(true);
-    const { data, error } = await updateMyProfile(user.id, { goals, onboarded_at: new Date().toISOString() });
+    const { data, error } = await updateMyProfile(user.id, {
+      ...result.profile,
+      onboarded_at: new Date().toISOString(),
+    });
     if (error) {
       setSaving(false);
-      return setGoalsError(friendlyError(error));
+      return setMessage({ title: friendlyError(error) });
     }
     localStorage.removeItem(draftKey);
     navigate(nextPath(user, data), { replace: true });
@@ -131,7 +96,7 @@ function OnboardingFlow({ user, profile }) {
 
   return (
     <StepLayout title="Kenalan dulu" headerRight={view !== 'waitlist' && <AutosaveNote />}>
-      {view === 'profile' && (
+      {view === 'profile' ? (
         <ProfileStep
           firstName={initial.firstName}
           form={form}
@@ -139,20 +104,11 @@ function OnboardingFlow({ user, profile }) {
           invalid={invalid}
           message={message}
           saving={saving}
-          onSubmit={submitProfile}
+          onSubmit={submit}
         />
+      ) : (
+        <UnderageWaitlist defaultEmail={user.email} onExit={signOut} />
       )}
-      {view === 'goals' && (
-        <GoalsStep
-          selected={goals}
-          onToggle={toggleGoal}
-          onBack={() => goTo('profile')}
-          onFinish={finish}
-          saving={saving}
-          error={goalsError}
-        />
-      )}
-      {view === 'waitlist' && <UnderageWaitlist defaultEmail={user.email} onExit={signOut} />}
     </StepLayout>
   );
 }

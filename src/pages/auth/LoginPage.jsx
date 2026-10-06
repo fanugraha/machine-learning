@@ -31,17 +31,20 @@ const readAttempts = () => {
 const saveAttempts = (a) => localStorage.setItem(STORAGE_KEYS.loginAttempts, JSON.stringify(a));
 
 const CHAT_SAMPLE = [
-  { from: 'user', text: 'Dua minggu ini aku susah tidur, padahal badan capek.' },
-  { from: 'edith', text: 'Duh, pasti nggak enak ya. Biasanya kamu tidur jam berapa? Masih ngopi sore-sore?' },
-  { from: 'user', text: 'Jam 1-an. Kopi sore hampir tiap hari.' },
-  { from: 'edith', text: 'Coba stop kopi setelah jam 2 siang seminggu ini, ya. Mau aku ingetin tiap malam?' },
+  { from: 'user', text: 'Dari kemarin demam sama pusing.' },
+  { from: 'edith', text: 'Semoga cepat baikan, Rina. Demamnya sudah berapa hari, dan berapa suhunya?' },
+  { from: 'user', text: 'Baru 2 hari, sekitar 38°C.' },
+  {
+    from: 'edith',
+    text: 'Untuk sekarang bisa rawat mandiri dulu: banyak minum dan istirahat. Kalau lewat 3 hari atau muncul sesak, segera ke dokter, ya.',
+  },
 ];
 
 function LoginAside() {
   return (
     <>
-      <AsideHero title="Asisten kesehatan yang paham kamu.">
-        Mau tanya soal tidur, makan, atau keluhan ringan? Cerita aja ke EDITH, kapan pun.
+      <AsideHero title="Lagi nggak enak badan? Tanya EDITH dulu.">
+        Ceritain keluhanmu. EDITH bantu kamu tahu harus gimana: rawat sendiri, ke dokter, atau ke IGD.
       </AsideHero>
       <div className="mt-10 w-full max-w-[500px] overflow-hidden rounded-xl border border-line-primary bg-white shadow-sm">
         <div className="flex items-center gap-2.5 border-b border-line-primary px-4 py-3">

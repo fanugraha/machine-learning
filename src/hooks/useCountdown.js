@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 // Hitung mundur dalam detik.
-// - initialEndsAt: timestamp (ms) akhir hitungan, mis. dipulihkan dari storage. 0 = tidak berjalan.
+// - initialEndsAt: timestamp (ms) akhir hitungan (atau fungsi yang mengembalikannya). 0 = tidak berjalan.
 // - start(ms): mulai hitungan baru selama `ms` milidetik.
 export function useCountdown(initialEndsAt = 0) {
   const [endsAt, setEndsAt] = useState(initialEndsAt);

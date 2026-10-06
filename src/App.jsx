@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router';
-import { PATHS } from './routes/paths.js';
+import { AUTH_REDIRECTS, PATHS } from './routes/paths.js';
 
 // Tiap halaman dimuat terpisah (code splitting) agar halaman pertama cepat terbuka.
 const LoginPage = lazy(() => import('./pages/auth/LoginPage.jsx'));
@@ -10,7 +10,9 @@ const ForgotPasswordPage = lazy(() => import('./pages/auth/ForgotPasswordPage.js
 const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPasswordPage.jsx'));
 const ConsentPage = lazy(() => import('./pages/onboarding/ConsentPage.jsx'));
 const OnboardingPage = lazy(() => import('./pages/onboarding/OnboardingPage.jsx'));
-const DashboardPage = lazy(() => import('./pages/dashboard/DashboardPage.jsx'));
+const AuthCallbackPage = lazy(() => import('./pages/auth/AuthCallbackPage.jsx'));
+const AccountLinkedPage = lazy(() => import('./pages/auth/AccountLinkedPage.jsx'));
+const HomePage = lazy(() => import('./pages/home/HomePage.jsx'));
 
 // URL lama (*.html) dialihkan ke route baru dengan query yang sama.
 function LegacyRedirect({ to }) {
@@ -30,12 +32,13 @@ export default function App() {
           <Route path={PATHS.resetPassword} element={<ResetPasswordPage />} />
           <Route path={PATHS.consent} element={<ConsentPage />} />
           <Route path={PATHS.onboarding} element={<OnboardingPage />} />
-          <Route path={PATHS.dashboard} element={<DashboardPage />} />
+          <Route path={PATHS.accountLinked} element={<AccountLinkedPage />} />
+          <Route path={PATHS.home} element={<HomePage />} />
 
           {/* Redirect URL Supabase: dirender langsung (bukan dialihkan) supaya token di URL
-              sempat diproses Supabase. Halaman lalu merapikan URL-nya sendiri. */}
-          <Route path="/dashboard.html" element={<DashboardPage />} />
-          <Route path="/reset-password.html" element={<ResetPasswordPage />} />
+              sempat diproses Supabase sebelum pindah halaman. */}
+          <Route path={AUTH_REDIRECTS.afterSignIn} element={<AuthCallbackPage />} />
+          <Route path={AUTH_REDIRECTS.passwordReset} element={<ResetPasswordPage />} />
 
           <Route path="/index.html" element={<LegacyRedirect to={PATHS.login} />} />
           <Route path="/register.html" element={<LegacyRedirect to={PATHS.register} />} />
@@ -43,6 +46,7 @@ export default function App() {
           <Route path="/forgot-password.html" element={<LegacyRedirect to={PATHS.forgotPassword} />} />
           <Route path="/consent.html" element={<LegacyRedirect to={PATHS.consent} />} />
           <Route path="/onboarding.html" element={<LegacyRedirect to={PATHS.onboarding} />} />
+          <Route path="/dashboard" element={<LegacyRedirect to={PATHS.home} />} />
 
           <Route path="*" element={<Navigate to={PATHS.login} replace />} />
         </Routes>

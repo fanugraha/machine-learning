@@ -4,6 +4,7 @@ const TONES = {
   brand: 'bg-brand-50 text-brand-600',
   warning: 'bg-amber-50 text-amber-700',
   info: 'bg-sky-50 text-sky-700',
+  success: 'bg-green-50 text-green-700',
 };
 
 // Ikon besar dalam lingkaran, dipakai di layar status (cek email, link kedaluwarsa, dst.).

@@ -80,14 +80,6 @@
     @apply h-4 w-4 accent-brand-600;
   }
 
-  /* Chip tujuan */
-  .chip {
-    @apply inline-flex items-center gap-1.5 rounded-full border border-line-secondary bg-white px-4 py-2 text-sm font-medium text-ink-primary transition hover:border-brand-500;
-  }
-  .chip[aria-pressed='true'] {
-    @apply border-brand-500 bg-brand-50 text-brand-700;
-  }
-
   /* Banner */
   .banner {
     @apply flex gap-3 rounded-lg border px-4 py-3 text-sm;
@@ -103,23 +95,6 @@
   }
   .banner-title {
     @apply font-semibold;
-  }
-
-  /* Stepper */
-  .step {
-    @apply flex flex-col items-center gap-1.5 text-xs font-medium text-ink-tertiary;
-  }
-  .step-circle {
-    @apply flex h-7 w-7 items-center justify-center rounded-full border-2 border-line-secondary bg-white text-xs font-semibold;
-  }
-  .step[data-state='active'] {
-    @apply text-ink-primary;
-  }
-  .step[data-state='active'] .step-circle {
-    @apply border-brand-600 text-brand-700;
-  }
-  .step[data-state='complete'] .step-circle {
-    @apply border-brand-600 bg-brand-600 text-white;
   }
 
   /* Bubble chat contoh */

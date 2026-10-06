@@ -18,15 +18,14 @@ export default {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
       },
       colors: {
-        // Warna brand EDITH (teal → hijau dari logo).
+        // Warna brand Qiscus Design System (PRD v2.0: brand #1A7F6F). Gradien logo tetap teal → hijau.
         brand: {
-          50: '#EBF8F9',
-          100: '#CFEFF1',
-          200: '#A3E0E4',
-          500: '#20AEB8',
-          600: '#118690',
-          700: '#0D6E76',
-          lime: '#91C964',
+          50: '#E8F4F1',
+          100: '#CBE7E0',
+          200: '#9DD1C4',
+          500: '#24998A',
+          600: '#1A7F6F',
+          700: '#14665A',
         },
         ink: {
           primary: '#101828',

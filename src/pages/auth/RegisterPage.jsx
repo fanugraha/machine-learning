@@ -18,14 +18,14 @@ import { GoogleAuthButton } from './GoogleAuthButton.jsx';
 
 const BENEFITS = [
   { icon: Lock, title: 'Datamu aman', text: 'Selalu dienkripsi dan nggak pernah kami jual.' },
-  { icon: UserCheck, title: 'Saran yang pas buat kamu', text: 'Disesuaikan dengan usia, BMI, dan tujuanmu.' },
+  { icon: UserCheck, title: 'Saran yang pas buat kamu', text: 'Disesuaikan dengan usia dan kondisimu.' },
   { icon: Trash2, title: 'Kamu yang pegang kendali', text: 'Ubah atau hapus datamu kapan aja dari profil.' },
 ];
 
 function RegisterAside() {
   return (
     <>
-      <AsideHero title="Siap dalam 2 menit aja.">Cukup isi 5 data dasar. Sisanya bisa nyusul sambil ngobrol.</AsideHero>
+      <AsideHero title="Siap dalam 2 menit aja.">Cukup isi 3 data dasar. Sisanya bisa nyusul sambil ngobrol.</AsideHero>
       <ul className="mt-10 max-w-[500px] space-y-5">
         {BENEFITS.map(({ icon: Icon, title, text }) => (
           <li key={title} className="flex items-start gap-4">

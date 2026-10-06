@@ -3,7 +3,6 @@ import { Banner } from '../../components/ui/Banner.jsx';
 import { Button } from '../../components/ui/Button.jsx';
 import { DateField } from '../../components/ui/DateField.jsx';
 import { Field } from '../../components/ui/Field.jsx';
-import { Stepper } from '../../components/ui/Stepper.jsx';
 import { cx } from '../../utils/cx.js';
 
 const GENDERS = [
@@ -11,12 +10,9 @@ const GENDERS = [
   { value: 'male', label: 'Laki-laki' },
 ];
 
-// 1e / 2e: Profil dasar.
+// 1e / 2e: Profil dasar (onboarding 1 layar).
 export function ProfileStep({ firstName, form, onChange, invalid, message, saving, onSubmit }) {
-  const set =
-    (key, transform = (v) => v) =>
-    (e) =>
-      onChange({ ...form, [key]: transform(e.target.value) });
+  const set = (key) => (e) => onChange({ ...form, [key]: e.target.value });
 
   return (
     <StepCard
@@ -27,16 +23,15 @@ export function ProfileStep({ firstName, form, onChange, invalid, message, savin
       footerClassName="flex justify-end"
       footer={
         <Button type="submit" className="w-full lg:w-auto" loading={saving} loadingText="Menyimpan...">
-          Lanjut
+          Mulai pakai EDITH
         </Button>
       }
     >
-      <Stepper steps={['Profil dasar', 'Tujuan']} current={0} />
       <div className="space-y-1.5">
         <h1 className="text-xl font-bold tracking-tight">
           {firstName ? `Hai ${firstName}, kenalan dulu, yuk` : 'Hai, kenalan dulu, yuk'}
         </h1>
-        <p className="text-sm text-ink-secondary">Biar EDITH bisa kasih saran yang pas buat kamu.</p>
+        <p className="text-sm text-ink-secondary">Cuma 3 hal, biar EDITH bisa nyapa dan kasih saran yang pas.</p>
       </div>
       {message && (
         <Banner type="error" title={message.title}>
@@ -80,30 +75,6 @@ export function ProfileStep({ firstName, form, onChange, invalid, message, savin
             ))}
           </div>
         </fieldset>
-        <div className="grid grid-cols-2 gap-3">
-          <Field
-            id="height"
-            label="Tinggi badan"
-            inputMode="numeric"
-            placeholder="160"
-            maxLength={3}
-            unit="cm"
-            value={form.height}
-            onChange={set('height')}
-            invalid={invalid.height}
-          />
-          <Field
-            id="weight"
-            label="Berat badan"
-            inputMode="decimal"
-            placeholder="55"
-            maxLength={5}
-            unit="kg"
-            value={form.weight}
-            onChange={set('weight')}
-            invalid={invalid.weight}
-          />
-        </div>
       </div>
     </StepCard>
   );

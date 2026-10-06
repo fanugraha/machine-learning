@@ -1,6 +1,6 @@
 # EDITH Web
 
-Aplikasi web EDITH, asisten kesehatan pribadi: masuk, daftar, verifikasi email, persetujuan data, onboarding, dan dashboard. Dibangun dengan React 19, Vite, React Router, Tailwind CSS, dan Supabase Auth (email + password, Google).
+Aplikasi web EDITH, asisten kesehatan pribadi (PRD v2.0, Fase 1): masuk, daftar, verifikasi email, lupa password, persetujuan data, onboarding 1 layar, dan beranda. Dibangun dengan React 19, Vite, React Router, Tailwind CSS, dan Supabase Auth (email + password, Google).
 
 ## Menjalankan
 
@@ -31,12 +31,12 @@ npm run dev            # http://127.0.0.1:5500
 │   ├── App.jsx                 daftar route (React Router)
 │   ├── routes/paths.js         konstanta URL + Redirect URL Supabase
 │   ├── pages/                  satu folder per fitur
-│   │   ├── auth/               LoginPage, RegisterPage, VerifyEmailPage, ForgotPasswordPage, ResetPasswordPage
-│   │   ├── onboarding/         ConsentPage, OnboardingPage (+ ProfileStep, GoalsStep, UnderageWaitlist)
-│   │   └── dashboard/
+│   │   ├── auth/               Login, Register, VerifyEmail, ForgotPassword, ResetPassword, AuthCallback, AccountLinked
+│   │   ├── onboarding/         ConsentPage, OnboardingPage (+ ProfileStep, UnderageWaitlist)
+│   │   └── home/               Beranda: sapaan + tiga pintasan
 │   ├── components/
-│   │   ├── ui/                 Button, Field, Banner, Checkbox, Stepper, … (komponen dasar)
-│   │   ├── layout/             AuthSplitLayout (Masuk/Daftar), StepLayout (layar langkah)
+│   │   ├── ui/                 Button, Field, DateField, Banner, Checkbox, … (komponen dasar)
+│   │   ├── layout/             AuthSplitLayout (Masuk/Daftar), StepLayout (layar langkah), FormScreen (form polos)
 │   │   └── brand/              Logo, Disclaimer, GoogleIcon
 │   ├── hooks/                  useStepGuard, useSignOut, useCountdown, …
 │   ├── lib/                    supabase client, akses database (profile-api), alur antar-langkah (flow), pesan error
@@ -55,13 +55,13 @@ npm run dev            # http://127.0.0.1:5500
 
 ## Database (Supabase)
 
-Skema ada di `supabase/migrations/`. Jalankan file SQL-nya di **Supabase Dashboard → SQL Editor** (sekali per project; aman dijalankan ulang).
+Skema ada di `supabase/migrations/`. Jalankan file SQL-nya **berurutan sesuai nama file** di **Supabase Dashboard → SQL Editor** (sekali per project; aman dijalankan ulang).
 
-| Tabel      | Isi                                                                                      | Akses pengguna (RLS)                               |
-| ---------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| `profiles` | nama, tanggal lahir, jenis kelamin, tinggi, berat, tujuan, status persetujuan/onboarding | baca & ubah baris sendiri (kolom tertentu saja)    |
-| `consents` | catatan persetujuan S&K dan data kesehatan (jenis, versi kebijakan, waktu)               | baca & tambah milik sendiri; tidak bisa ubah/hapus |
-| `waitlist` | email pendaftar di bawah 18 tahun                                                        | hanya tambah                                       |
+| Tabel      | Isi                                                                               | Akses pengguna (RLS)                               |
+| ---------- | --------------------------------------------------------------------------------- | -------------------------------------------------- |
+| `profiles` | nama, nama panggilan, tanggal lahir, jenis kelamin, status persetujuan/onboarding | baca & ubah baris sendiri (kolom tertentu saja)    |
+| `consents` | catatan persetujuan S&K dan data kesehatan (jenis, versi kebijakan, waktu)        | baca & tambah milik sendiri; tidak bisa ubah/hapus |
+| `waitlist` | email pendaftar di bawah 18 tahun                                                 | hanya tambah                                       |
 
 - Baris `profiles` dibuat otomatis oleh trigger saat akun dibuat (`handle_new_user`).
 - `profiles.health_consent_at` hanya diisi trigger dari tabel `consents`, tidak bisa diubah dari browser.
@@ -70,9 +70,9 @@ Skema ada di `supabase/migrations/`. Jalankan file SQL-nya di **Supabase Dashboa
 
 ## Alur pengguna
 
-Masuk/Daftar → Verifikasi email (khusus email + password) → Persetujuan data kesehatan → Profil dasar → Tujuan → Dashboard.
+Masuk/Daftar → Verifikasi email (khusus email + password) → Persetujuan data kesehatan → Profil dasar (1 layar) → Beranda.
 
-`nextPath()` di `src/lib/flow.js` menentukan langkah berikutnya dari baris `profiles` milik user (`health_consent_at`, `onboarded_at`). Login Google dan link verifikasi email kembali ke `/dashboard.html`, lalu diarahkan ke langkah yang belum selesai.
+`nextPath()` di `src/lib/flow.js` menentukan langkah berikutnya dari baris `profiles` milik user (`health_consent_at`, `onboarded_at`). Login Google dan link verifikasi email kembali ke `/dashboard.html` (`AuthCallbackPage`), lalu diarahkan ke langkah yang belum selesai. Bila email yang sudah terdaftar masuk lewat Google, Supabase menggabungkan akun dan pengguna melihat layar "Akunmu sudah tersambung ke Google" sekali.
 
 ## Catatan penting
 

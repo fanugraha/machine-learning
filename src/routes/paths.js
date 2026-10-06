@@ -6,7 +6,8 @@ export const PATHS = {
   resetPassword: '/reset-password',
   consent: '/consent',
   onboarding: '/onboarding',
-  dashboard: '/dashboard',
+  home: '/home',
+  accountLinked: '/account-linked',
 };
 
 // Alamat tujuan yang dikirim ke Supabase. Harus sama persis dengan Redirect URLs di

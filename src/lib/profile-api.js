@@ -4,8 +4,7 @@ import { nextPath } from './flow.js';
 // Versi Syarat & Ketentuan / Kebijakan Privasi yang disetujui pengguna. Naikkan saat dokumennya berubah.
 export const POLICY_VERSION = '2026-10';
 
-const PROFILE_COLUMNS =
-  'full_name, nickname, birth_date, gender, height_cm, weight_kg, goals, health_consent_at, onboarded_at';
+const PROFILE_COLUMNS = 'full_name, nickname, birth_date, gender, health_consent_at, onboarded_at';
 
 // Profil milik user yang sedang login (tabel public.profiles). { data, error }
 export const getMyProfile = (userId) =>
