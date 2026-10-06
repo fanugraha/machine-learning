@@ -143,10 +143,10 @@ export default function NoteDetailPage() {
       footer={
         note && (
           <div className="flex gap-2">
-            <Button variant="secondary" className="flex-1" onClick={toSummary}>
+            <Button variant="secondary" className="flex-1 whitespace-nowrap px-3" onClick={toSummary}>
               Ke dokter
             </Button>
-            <Button className="flex-1" disabled title="Segera hadir">
+            <Button className="flex-1 whitespace-nowrap px-3" disabled title="Segera hadir">
               Kasih kabar terbaru
             </Button>
           </div>
@@ -171,7 +171,11 @@ export default function NoteDetailPage() {
             <div className="flex flex-col gap-2 px-1 lg:px-0">
               <h1 className="text-xl font-bold tracking-tight lg:text-2xl">{note.title}</h1>
               <div className="flex flex-wrap items-center gap-1.5 lg:gap-2">
-                {note.done ? <Chip tone="success">Sudah sembuh</Chip> : note.level && <Chip tone={levelTone(note.level)}>{note.level}</Chip>}
+                {note.done ? (
+                  <Chip tone="success">Sudah sembuh</Chip>
+                ) : (
+                  note.level && <Chip tone={levelTone(note.level)}>{note.level}</Chip>
+                )}
                 <span className="text-xs text-ink-tertiary">
                   <span className="hidden lg:inline">{note.type} · </span>
                   {note.span}

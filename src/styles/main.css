@@ -37,6 +37,9 @@
   .btn-ghost {
     @apply text-ink-secondary hover:bg-surface-secondary hover:text-ink-primary;
   }
+  .btn-destructive {
+    @apply bg-red-600 text-white hover:bg-red-700 disabled:bg-line-primary disabled:text-ink-tertiary;
+  }
 
   /* Field */
   .field-label {
