@@ -3,12 +3,13 @@ import { SAMPLE_NOTES, SAMPLE_PROFILE_ITEMS, SAMPLE_SUMMARIES } from './sample-d
 
 // Catatan kesehatan, ringkasan dokter, dan isi Profil kesehatan.
 // BELUM tersimpan di database (tabelnya menyusul di Fase 2): data hidup di memori selama tab terbuka.
-// Data contoh hanya muncul saat dev dengan ?demo di URL; selain itu semuanya kosong.
+// Data contoh hanya muncul dengan ?demo di URL, saat dev atau bila VITE_ENABLE_DEMO=true saat build
+// (untuk pratinjau di server); selain itu semuanya kosong.
 
 const DEMO_KEY = 'edith.demo';
 
 function isDemo() {
-  if (!import.meta.env.DEV) return false;
+  if (!import.meta.env.DEV && import.meta.env.VITE_ENABLE_DEMO !== 'true') return false;
   try {
     if (new URLSearchParams(window.location.search).has('demo')) sessionStorage.setItem(DEMO_KEY, '1');
     return sessionStorage.getItem(DEMO_KEY) === '1';
